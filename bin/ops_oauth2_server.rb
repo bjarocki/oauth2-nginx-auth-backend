@@ -31,7 +31,9 @@ class HTTPServer < Sinatra::Base
     return 403 unless user_info
 
     # build and authorize cookies
-    cookies.merge!(auth.authorize(user_info, request))
+    auth.authorize(user_info, request).each do |cookie, value|
+      auth.custom_cookie(response, cookie, value)
+    end
 
     # redirect user to a proper place if needed
     if cookies.key?(auth.cookie_name_redirect)

@@ -38,6 +38,10 @@ class Auth
     ENV['OAUTH_COOKIE_DOMAIN'] || configuration.dig('cookie_domain') || abort('Missing OAUTH_COOKIE_DOMAIN')
   end
 
+  def cookie_ttl
+    ENV['OAUTH_COOKIE_TTL'].to_i || configuration.dig('cookie_ttl').to_i || abort('Missing OAUTH_COOKIE_TTL')
+  end
+
   def sign(data)
     digest = OpenSSL::Digest.new('sha256')
     Base64.encode64(OpenSSL::HMAC.digest(digest, secret, data))
@@ -68,6 +72,14 @@ class Auth
     cookies[cookie_name_redirect] = request.env[header_request_redirect_url]
     401
   end
+
+  def custom_cookie(response, cookie, value)
+    response.set_cookie(cookie, :value => value,
+      domain: cookie_domain,
+      path: '/',
+      expires: Time.now + cookie_ttl)
+  end
+
 
   def untrusted(cookies, request)
     cookies.delete(cookie_name_signature)
