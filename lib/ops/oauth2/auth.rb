@@ -39,7 +39,8 @@ class Auth
   end
 
   def cookie_ttl
-    ENV['OAUTH_COOKIE_TTL'].to_i || configuration.dig('cookie_ttl').to_i || abort('Missing OAUTH_COOKIE_TTL')
+    return ENV['OAUTH_COOKIE_TTL'].to_i if ENV['OAUTH_COOKIE_TTL']
+    configuration.dig('cookie_ttl').to_i || abort('Missing OAUTH_COOKIE_TTL')
   end
 
   def sign(data)
