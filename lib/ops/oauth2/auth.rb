@@ -73,14 +73,6 @@ class Auth
     401
   end
 
-  def custom_cookie(response, cookie, value)
-    response.set_cookie(cookie, :value => value,
-      domain: cookie_domain,
-      path: '/',
-      expires: Time.now + cookie_ttl)
-  end
-
-
   def untrusted(cookies, request)
     cookies.delete(cookie_name_signature)
     cookies.delete(cookie_name_permissions)

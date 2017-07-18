@@ -32,7 +32,7 @@ class HTTPServer < Sinatra::Base
 
     # build and authorize cookies
     auth.authorize(user_info, request).each do |cookie, value|
-      auth.custom_cookie(response, cookie, value)
+      cookies.set(cookie, {value: value, expires: Time.now + auth.cookie_ttl}
     end
 
     # redirect user to a proper place if needed
