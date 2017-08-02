@@ -22,6 +22,14 @@ class Google
     ENV['OAUTH_SERVER_URL'] || configuration.dig('oauth_server_url') || abort('Missing OAUTH_SERVER_URL')
   end
 
+  def google_whitelisted_domains
+    ENV['GOOGLE_WHITELISTED_DOMAINS'] || configuration.dig('google_whitelisted_domains') || abort('Missing GOOGLE_WHITELISTED_DOMAINS')
+  end
+
+  def google_whitelisted_emails
+    ENV['GOOGLE_WHITELISTED_EMAILS'] || configuration.dig('google_whitelisted_emails') || abort('Missing GOOGLE_WHITELISTED_EMAILS')
+  end
+
   def oauth_auth_url
     'https://accounts.google.com/o/oauth2/auth'
   end
@@ -61,6 +69,17 @@ class Google
       '?',
       oauth_auth_url_params
     ].join
+  end
+
+  def permitted?(user_info)
+      email = user_info.dig('email')
+      return false unless email
+      _, domain = email.split('@')
+      return true if google_whitelisted_emails.include? email
+      return true if google_whitelisted_domains.include? domain
+      false
+    rescue
+      false
   end
 
   def user_info(authorization)

@@ -2,6 +2,7 @@
 
 require 'sinatra'
 require 'sinatra/cookies'
+require 'ops/oauth2/google'
 require 'ops/oauth2/slack'
 require 'ops/oauth2/auth'
 
@@ -10,16 +11,49 @@ class HTTPServer < Sinatra::Base
   helpers Sinatra::Cookies
 
   slack = Slack.new
+  google = Google.new
   auth = Auth.new
 
   set :port, 3000
   set :cookie_options, domain: auth.cookie_domain, secure: true, httponly: true
 
-  get '/oauth2/sign_in' do
+  get '/oauth2/google/sign_in' do
+    redirect google.oauth_auth_redirect
+  end
+
+  get '/oauth2/google/authorize' do
+    if params.key? 'code'
+      response = google.verify(params[:code])
+      return auth.go_to_auth(cookies, request) unless response.key? 'access_token'
+      user_info = google.user_info(response['access_token'])
+
+      puts user_info
+
+      return 403 unless google.permitted?(user_info)
+
+      return auth.go_to_auth(cookies, request) unless user_info.key? 'email'
+
+      # cookies.merge!(auth.authorize(user_info['email']))
+      auth.authorize({'user': 'test'}, request).each do |cookie, value|
+        cookies.set(cookie, value: value, expires: Time.now + auth.cookie_ttl)
+      end
+
+      if cookies.key?(auth.cookie_name_redirect)
+        redirect_url = cookies[auth.cookie_name_redirect]
+        cookies.delete(auth.cookie_name_redirect)
+        redirect redirect_url
+      end
+
+      redirect auth.default_redirect_page
+    end
+    auth.authorized?(cookies, request)
+  end
+
+  get '/oauth2/slack/sign_in' do
     redirect slack.oauth_auth_redirect
   end
 
-  get '/oauth2/slack' do
+  get '/oauth2/slack/authorize' do
     response = slack.verify(params)
     return 403 unless response.dig('ok')
 

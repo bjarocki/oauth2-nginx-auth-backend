@@ -7,15 +7,16 @@ require 'openssl'
 # Authorization
 class Auth
   def cookie_name_permissions
-    'OKIntranetPermissions'
+    ENV['OAUTH_COOKIE_NAME_PERMISSIONS'] || configuration.dig('cookie_name_permissions') || abort('Missing OAUTH_COOKIE_NAME_PERMISSIONS')
   end
 
   def cookie_name_signature
     'OKIntranetSignature'
+    ENV['OAUTH_COOKIE_NAME_SIGNATURE'] || configuration.dig('cookie_name_signature') || abort('Missing OAUTH_COOKIE_NAME_SIGNATURE')
   end
 
   def cookie_name_redirect
-    'OKIntranetRedirect'
+    ENV['OAUTH_COOKIE_NAME_REDIRECT'] || configuration.dig('cookie_name_redirect') || abort('Missing OAUTH_COOKIE_NAME_REDIRECT')
   end
 
   def header_request_redirect_url
