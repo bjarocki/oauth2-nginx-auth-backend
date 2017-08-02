@@ -15,6 +15,7 @@ class HTTPServer < Sinatra::Base
   auth = Auth.new
 
   set :port, 3000
+  set :bind, '0.0.0.0'
   set :cookie_options, domain: auth.cookie_domain, secure: true, httponly: true
 
   get '/oauth2/google/sign_in' do
