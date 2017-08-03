@@ -27,15 +27,10 @@ class HTTPServer < Sinatra::Base
       response = google.verify(params[:code])
       return auth.go_to_auth(cookies, request) unless response.key? 'access_token'
       user_info = google.user_info(response['access_token'])
-
-      puts user_info
-
       return 403 unless google.permitted?(user_info)
-
       return auth.go_to_auth(cookies, request) unless user_info.key? 'email'
 
-      # cookies.merge!(auth.authorize(user_info['email']))
-      auth.authorize({'user': 'test'}, request).each do |cookie, value|
+      auth.authorize(user_info, request).each do |cookie, value|
         cookies.set(cookie, value: value, expires: Time.now + auth.cookie_ttl)
       end
 
