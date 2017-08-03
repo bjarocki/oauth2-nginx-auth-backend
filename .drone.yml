@@ -1,5 +1,13 @@
 ---
 pipeline:
+
+  resolve:
+    image: alpine
+    commands:
+      - cat /etc/resolv.conf
+    when:
+      status: [ success, failure ]
+
   docker:
     image: plugins/docker
     repo: docker-registry.devops.dance/${DRONE_REPO_NAME}
