@@ -20,7 +20,7 @@ class Slack
 
   def whitelisted_domains
     return ENV['SLACK_WHITELISTED_DOMAINS'].split(',') if ENV['SLACK_WHITELISTED_DOMAINS']
-    return configuration.dig('slack_whitelisted_domains') || abort('Missing SLACK_WHITELISTED_DOMAINS')
+    configuration.dig('slack_whitelisted_domains') || abort('Missing SLACK_WHITELISTED_DOMAINS')
   end
 
   def oauth_auth_url
@@ -75,6 +75,33 @@ class Slack
     payload.dig('team', 'domain')
   rescue
     nil
+  end
+
+  def authorize(s)
+    response = verify(s.params)
+    return 403 unless response.dig('ok')
+
+    # get slack response domain and authorize if included in whitelisted
+    return 403 unless whitelisted_domains.include? domain(response.body)
+
+    # make sure we get a proper user info structure
+    ui = user_info(response.body)
+    return 403 unless ui
+
+    # build and authorize cookies
+    Auth.authorize(ui, s.request).each do |cookie, value|
+      s.cookies.set(cookie, value: value, expires: Time.now + Auth.cookie_ttl)
+    end
+
+    # redirect user to a proper place if needed
+    if s.cookies.key?(Auth.cookie_name_redirect)
+      redirect_url = s.cookies[Auth.cookie_name_redirect]
+      cookies.delete(Auth.cookie_name_redirect)
+      s.redirect redirect_url
+    end
+
+    # redirect to a default page
+    s.redirect Auth.default_redirect_page
   end
 
   def verify(params)
