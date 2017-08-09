@@ -16,6 +16,9 @@ class HTTPServer < Sinatra::Base
   set :port, 3000
   set :bind, '0.0.0.0'
   set :cookie_options, domain: Auth.cookie_domain, secure: true, httponly: true
+  set :public_folder, 'static'
+  set :views, Proc.new { File.join(root, "..", "views") }
+  set :environment, :production
 
   get '/oauth2/google/sign_in' do
     redirect google.oauth_auth_redirect
@@ -35,6 +38,10 @@ class HTTPServer < Sinatra::Base
 
   get '/oauth2/verify' do
     Auth.authorized?(cookies, request)
+  end
+
+  get '/oauth2/sign_in' do
+    erb :index
   end
 end
 
