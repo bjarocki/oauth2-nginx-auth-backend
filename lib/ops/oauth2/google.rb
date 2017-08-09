@@ -92,7 +92,6 @@ class Google
 
   def access_token(params)
     response = verify(params[:code])
-    puts response
     response.dig('access_token')
   end
 
@@ -129,8 +128,6 @@ class Google
   end
 
   def verify(code)
-    # do not verify oauth code if not running as a server
-    return {} unless configuration.dig('server')
     options = {
       body: {
         client_id: oauth_client_id,
