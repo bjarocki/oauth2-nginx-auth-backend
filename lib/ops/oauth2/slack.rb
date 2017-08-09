@@ -96,7 +96,7 @@ class Slack
     # redirect user to a proper place if needed
     if s.cookies.key?(Auth.cookie_name_redirect)
       redirect_url = s.cookies[Auth.cookie_name_redirect]
-      cookies.delete(Auth.cookie_name_redirect)
+      s.cookies.delete(Auth.cookie_name_redirect)
       s.redirect redirect_url
     end
 
