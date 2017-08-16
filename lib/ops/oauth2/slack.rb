@@ -7,20 +7,20 @@ require 'json'
 # Basic support of slack oauth2
 class Slack
   def oauth_client_secret
-    ENV['SLACK_OAUTH_CLIENT_SECRET'] || configuration.dig('slack_oauth_client_secret') || abort('Missing SLACK_OAUTH_CLIENT_SECRET')
+    ENV['SLACK_OAUTH_CLIENT_SECRET'] || configuration.dig('slack', 'oauth_client_secret') || abort('Missing SLACK_OAUTH_CLIENT_SECRET')
   end
 
   def oauth_client_id
-    ENV['SLACK_OAUTH_CLIENT_ID'] || configuration.dig('slack_oauth_client_id') || abort('Missing SLACK_OAUTH_CLIENT_ID')
+    ENV['SLACK_OAUTH_CLIENT_ID'] || configuration.dig('slack', 'oauth_client_id') || abort('Missing SLACK_OAUTH_CLIENT_ID')
   end
 
   def redirect_url
-    ENV['SLACK_OAUTH_REDIRECT_URL'] || configuration.dig('slack_oauth_redirect_url') || abort('Missing SLACK_OAUTH_REDIRECT_URL')
+    ENV['SLACK_OAUTH_REDIRECT_URL'] || configuration.dig('slack', 'oauth_redirect_url') || abort('Missing SLACK_OAUTH_REDIRECT_URL')
   end
 
   def whitelisted_domains
     return ENV['SLACK_WHITELISTED_DOMAINS'].split(',') if ENV['SLACK_WHITELISTED_DOMAINS']
-    configuration.dig('slack_whitelisted_domains') || abort('Missing SLACK_WHITELISTED_DOMAINS')
+    configuration.dig('slack', 'whitelisted_domains') || abort('Missing SLACK_WHITELISTED_DOMAINS')
   end
 
   def oauth_auth_url

@@ -8,27 +8,27 @@ require 'ops/oauth2/auth'
 # Basic support of google oauth2
 class Google
   def oauth_client_secret
-    ENV['GOOGLE_OAUTH_CLIENT_SECRET'] || configuration.dig('google_oauth_client_secret') || abort('Missing GOOGLE_OAUTH_CLIENT_SECRET')
+    ENV['GOOGLE_OAUTH_CLIENT_SECRET'] || configuration.dig('google', 'oauth_client_secret') || abort('Missing GOOGLE_OAUTH_CLIENT_SECRET')
   end
 
   def oauth_client_id
-    ENV['GOOGLE_OAUTH_CLIENT_ID'] || configuration.dig('google_oauth_client_id') || abort('Missing GOOGLE_OAUTH_CLIENT_ID')
+    ENV['GOOGLE_OAUTH_CLIENT_ID'] || configuration.dig('google', 'oauth_client_id') || abort('Missing GOOGLE_OAUTH_CLIENT_ID')
   end
 
   def redirect_url
-    ENV['GOOGLE_OAUTH_REDIRECT_URL'] || configuration.dig('google_oauth_redirect_url') || abort('Missing GOOGLE_OAUTH_REDIRECT_URL')
+    ENV['GOOGLE_OAUTH_REDIRECT_URL'] || configuration.dig('google', 'oauth_redirect_url') || abort('Missing GOOGLE_OAUTH_REDIRECT_URL')
   end
 
   def state_url
-    ENV['OAUTH_SERVER_URL'] || configuration.dig('oauth_server_url') || abort('Missing OAUTH_SERVER_URL')
+    ENV['OAUTH_SERVER_URL'] || configuration.dig('google', 'oauth_server_url') || abort('Missing OAUTH_SERVER_URL')
   end
 
   def google_whitelisted_domains
-    ENV['GOOGLE_WHITELISTED_DOMAINS'] || configuration.dig('google_whitelisted_domains') || abort('Missing GOOGLE_WHITELISTED_DOMAINS')
+    ENV['GOOGLE_WHITELISTED_DOMAINS'] || configuration.dig('google', 'whitelisted_domains') || abort('Missing GOOGLE_WHITELISTED_DOMAINS')
   end
 
   def google_whitelisted_emails
-    ENV['GOOGLE_WHITELISTED_EMAILS'] || configuration.dig('google_whitelisted_emails') || abort('Missing GOOGLE_WHITELISTED_EMAILS')
+    ENV['GOOGLE_WHITELISTED_EMAILS'] || configuration.dig('google', 'whitelisted_emails') || abort('Missing GOOGLE_WHITELISTED_EMAILS')
   end
 
   def oauth_auth_url

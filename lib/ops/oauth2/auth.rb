@@ -7,16 +7,16 @@ require 'openssl'
 # Authorization
 class Auth
   def self.cookie_name_permissions
-    ENV['OAUTH_COOKIE_NAME_PERMISSIONS'] || configuration.dig('cookie_name_permissions') || abort('Missing OAUTH_COOKIE_NAME_PERMISSIONS')
+    ENV['OAUTH_COOKIE_NAME_PERMISSIONS'] || configuration.dig('auth', 'cookie_name_permissions') || abort('Missing OAUTH_COOKIE_NAME_PERMISSIONS')
   end
 
   def self.cookie_name_signature
     'OKIntranetSignature'
-    ENV['OAUTH_COOKIE_NAME_SIGNATURE'] || configuration.dig('cookie_name_signature') || abort('Missing OAUTH_COOKIE_NAME_SIGNATURE')
+    ENV['OAUTH_COOKIE_NAME_SIGNATURE'] || configuration.dig('auth', 'cookie_name_signature') || abort('Missing OAUTH_COOKIE_NAME_SIGNATURE')
   end
 
   def self.cookie_name_redirect
-    ENV['OAUTH_COOKIE_NAME_REDIRECT'] || configuration.dig('cookie_name_redirect') || abort('Missing OAUTH_COOKIE_NAME_REDIRECT')
+    ENV['OAUTH_COOKIE_NAME_REDIRECT'] || configuration.dig('auth', 'cookie_name_redirect') || abort('Missing OAUTH_COOKIE_NAME_REDIRECT')
   end
 
   def self.header_request_redirect_url
@@ -24,24 +24,24 @@ class Auth
   end
 
   def self.environment
-    ENV['OAUTH_ENVIRONMENT'] || configuration.dig('running_environment') || abort('Missing OAUTH_ENVIRONMENT')
+    ENV['OAUTH_ENVIRONMENT'] || configuration.dig('auth', 'running_environment') || abort('Missing OAUTH_ENVIRONMENT')
   end
 
   def self.secret
-    ENV['OAUTH_SHARED_SECRET'] || configuration.dig('oauth_shared_secret') || abort('Missing OAUTH_SHARED_SECRET')
+    ENV['OAUTH_SHARED_SECRET'] || configuration.dig('auth', 'oauth_shared_secret') || abort('Missing OAUTH_SHARED_SECRET')
   end
 
   def self.default_redirect_page
-    ENV['DEFAULT_REDIRECT_PAGE'] || configuration.dig('default_redirect_page') || abort('Missing DEFAULT_REDIRECT_PAGE')
+    ENV['DEFAULT_REDIRECT_PAGE'] || configuration.dig('auth', 'default_redirect_page') || abort('Missing DEFAULT_REDIRECT_PAGE')
   end
 
   def self.cookie_domain
-    ENV['OAUTH_COOKIE_DOMAIN'] || self.configuration.dig('cookie_domain') || abort('Missing OAUTH_COOKIE_DOMAIN')
+    ENV['OAUTH_COOKIE_DOMAIN'] || self.configuration.dig('auth', 'cookie_domain') || abort('Missing OAUTH_COOKIE_DOMAIN')
   end
 
   def self.cookie_ttl
     return ENV['OAUTH_COOKIE_TTL'].to_i if ENV['OAUTH_COOKIE_TTL']
-    configuration.dig('cookie_ttl').to_i || abort('Missing OAUTH_COOKIE_TTL')
+    configuration.dig('auth', 'cookie_ttl').to_i || abort('Missing OAUTH_COOKIE_TTL')
   end
 
   def self.sign(data)
