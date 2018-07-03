@@ -11,7 +11,6 @@ class Auth
   end
 
   def self.cookie_name_signature
-    'OKIntranetSignature'
     ENV['OAUTH_COOKIE_NAME_SIGNATURE'] || configuration.dig('auth', 'cookie_name_signature') || abort('Missing OAUTH_COOKIE_NAME_SIGNATURE')
   end
 
