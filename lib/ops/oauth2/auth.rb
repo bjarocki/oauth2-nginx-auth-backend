@@ -18,8 +18,16 @@ class Auth
     ENV['OAUTH_COOKIE_NAME_REDIRECT'] || configuration.dig('auth', 'cookie_name_redirect') || abort('Missing OAUTH_COOKIE_NAME_REDIRECT')
   end
 
-  def self.header_request_redirect_url
-    'HTTP_X_AUTH_REQUEST_REDIRECT'
+  def self.header_request_redirect
+    ENV['OAUTH_HEADER_REQUEST_REDIRECT'] || configuration.dig('auth', 'header_request_redirect') || 'HTTP_X_AUTH_REQUEST_REDIRECT'
+  end
+
+  def self.header_request_original_url
+    ENV['OAUTH_HEADER_REQUEST_ORIGINAL_URL'] || configuration.dig('auth', 'header_request_original_url') || 'HTTP_X_ORIGINAL_URL'
+  end
+
+  def self.header_request_original_method
+    ENV['OAUTH_HEADER_REQUEST_ORIGINAL_METHOD'] || configuration.dig('auth', 'header_request_original_method') || 'HTTP_X_ORIGINAL_METHOD'
   end
 
   def self.environment
@@ -36,6 +44,10 @@ class Auth
 
   def self.cookie_domain
     ENV['OAUTH_COOKIE_DOMAIN'] || self.configuration.dig('auth', 'cookie_domain') || abort('Missing OAUTH_COOKIE_DOMAIN')
+  end
+
+  def self.whitelisted_urls
+    ENV['OAUTH_COOKIE_DOMAIN'] || self.configuration.dig('auth', 'whitelistd_urls') || {}
   end
 
   def self.cookie_ttl
@@ -70,7 +82,8 @@ class Auth
   end
 
   def self.go_to_auth(cookies, request)
-    cookies[cookie_name_redirect] = request.env[header_request_redirect_url]
+    return 401 unless request.env[header_request_redirect]
+    cookies[cookie_name_redirect] = request.env[header_request_redirect]
     401
   end
 
@@ -80,7 +93,22 @@ class Auth
     go_to_auth(cookies, request)
   end
 
+  def self.whitelisted_url?(cookies, request)
+    if whitelisted_urls.keys.include? request.env[header_request_original_url]
+      return true unless whitelisted_urls.dig(request.env[header_request_original_url], 'methods')
+      return true if whitelisted_urls.dig(request.env[header_request_original_url], 'methods').include? request.env[header_request_original_method]
+      return false
+    end
+    false
+  end
+
+  def self.whitelisted?(cookies, request)
+    return true if whitelisted_url?(cookies, request)
+    false
+  end
+
   def self.authorized?(cookies, request)
+    return 200 if whitelisted?(cookies, request)
     return go_to_auth(cookies, request) unless cookies.key?(cookie_name_permissions)
     return go_to_auth(cookies, request) unless cookies.key?(cookie_name_signature)
     return untrusted(cookies, request) unless trusted?(cookies, request)

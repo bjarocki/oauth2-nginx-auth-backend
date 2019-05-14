@@ -3,11 +3,16 @@
 require 'cgi'
 require 'httparty'
 require 'json'
+require 'cgi'
 
 # Basic support of slack oauth2
 class Slack
   def oauth_client_secret
     ENV['SLACK_OAUTH_CLIENT_SECRET'] || configuration.dig('slack', 'oauth_client_secret') || abort('Missing SLACK_OAUTH_CLIENT_SECRET')
+  end
+
+  def webhook_url
+    configuration.dig('slack', 'webhook_url')
   end
 
   def oauth_client_id
@@ -32,7 +37,7 @@ class Slack
   end
 
   def oauth_scopes
-    'identity.basic,identity.team'
+    'identity.basic,identity.avatar,identity.team'
   end
 
   def configuration_file
@@ -81,6 +86,15 @@ class Slack
     response = verify(s.params)
     return 403 unless response.dig('ok')
 
+    if webhook_url
+      body = "```Authorizing:\n" \
+             "  User: #{response.dig('user', 'name')}\n" \
+             "  Team: #{response.dig('team', 'name')}\n" \
+             "```"
+      icon_url = response.dig('user', 'image_48')
+      notify(body, icon_url)
+    end
+
     # get slack response domain and authorize if included in whitelisted
     return 403 unless whitelisted_domains.include? domain(response.body)
 
@@ -115,5 +129,23 @@ class Slack
       }
     }
     HTTParty.post(oauth_token_url, options)
+  end
+
+  def notify(text, icon_url=nil)
+    headers = { 'Content-Type' => 'application/json' }
+    body = { 'text': text, username: 'Intranet', 'channel': '#intranet-events' }
+
+    if icon_url
+      body['icon_url'] = icon_url
+    else
+      body['icon_emoji'] = ':unlock:'
+    end
+
+    begin
+      r = HTTParty.post(webhook_url, body: body.to_json, headers: headers )
+      return (r.code == 200)
+    rescue
+      return false
+    end
   end
 end
