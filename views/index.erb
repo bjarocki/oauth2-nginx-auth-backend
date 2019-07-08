@@ -71,8 +71,12 @@
           <figure class="image is-256x256">
             <img src="images/devops-logo.png">
           </figure>
+<% if providers.include? "slack" %>
           <p><button class="loginBtn loginBtn--slack" onclick="location.href='/oauth2/slack/sign_in'">Login with Slack</button></p>
-          <!-- p><button class="loginBtn loginBtn--google" onclick="location.href='/oauth2/google/sign_in'">Login with Google</button></p -->
+<% end %>
+<% if providers.include? "google" %>
+          <p><button class="loginBtn loginBtn--google" onclick="location.href='/oauth2/google/sign_in'">Login with Google</button></p>
+<% end %>
         </div>
       </div>
     </div>

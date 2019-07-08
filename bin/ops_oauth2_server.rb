@@ -41,7 +41,7 @@ class HTTPServer < Sinatra::Base
   end
 
   get '/oauth2/sign_in' do
-    erb :index
+    erb :index, :locals => { :providers => Auth.configuration.keys }
   end
 end
 
