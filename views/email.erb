@@ -69,14 +69,21 @@
         <div class="box">
           <p class="is-centered"></p>
           <figure class="image is-256x256">
-            <img src="images/devops-logo.png">
+            <img src="../images/devops-logo.png">
           </figure>
-<% if providers.include? "slack" %>
-          <p><button class="loginBtn loginBtn--slack" onclick="location.href='/oauth2/slack/sign_in'">Login with Slack</button></p>
-<% end %>
-<% if providers.include? "google" %>
-          <p><button class="loginBtn loginBtn--google" onclick="location.href='/oauth2/google/sign_in'">Login with Google</button></p>
-<% end %>
+
+<form class="field has-addons" method="POST">
+  <div class="control is-expanded">
+    <input class="input" id="email" name="email" type="text" placeholder="email address">
+  </div>
+  <div class="control">
+    <button class="button is-info" type="submit">
+      Send
+    </button>
+  </div>
+</form>
+
+
         </div>
       </div>
     </div>

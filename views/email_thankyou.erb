@@ -69,14 +69,12 @@
         <div class="box">
           <p class="is-centered"></p>
           <figure class="image is-256x256">
-            <img src="images/devops-logo.png">
+            <img src="https://icons.iconarchive.com/icons/google/noto-emoji-people-expressions/1024/11122-man-bowing-icon.png">
           </figure>
-<% if providers.include? "slack" %>
-          <p><button class="loginBtn loginBtn--slack" onclick="location.href='/oauth2/slack/sign_in'">Login with Slack</button></p>
-<% end %>
-<% if providers.include? "google" %>
-          <p><button class="loginBtn loginBtn--google" onclick="location.href='/oauth2/google/sign_in'">Login with Google</button></p>
-<% end %>
+          <div class="notification is-info">
+            <h4 class="title is-4 is-spaced">Please check your email.</h4>
+            <h5 class="subtitle has-text-weight-light">You should get something from us, unless your email address is not whitelisted.</h5>
+          </div>
         </div>
       </div>
     </div>

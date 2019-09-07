@@ -5,6 +5,7 @@ require 'sinatra/cookies'
 require 'ops/oauth2/google'
 require 'ops/oauth2/slack'
 require 'ops/oauth2/auth'
+require 'ops/oauth2/email'
 
 # Main HTTPServer class handling requests
 class HTTPServer < Sinatra::Base
@@ -12,6 +13,7 @@ class HTTPServer < Sinatra::Base
 
   slack = Slack.new
   google = Google.new
+  email = Email.new
 
   set :port, 3000
   set :bind, '0.0.0.0'
@@ -42,6 +44,23 @@ class HTTPServer < Sinatra::Base
 
   get '/oauth2/sign_in' do
     erb :index, :locals => { :providers => Auth.configuration.keys }
+  end
+
+  get '/oauth2/email/authorize' do
+    if 200 == email.authorize(self)
+      erb :good, :locals => { :services => email.configuration.dig("services", "list") }
+    else
+      403
+    end
+  end
+
+  get '/oauth2/email/generate' do
+    erb :email
+  end
+
+  post '/oauth2/email/generate' do
+    email.generate(self)
+    erb :email_thankyou
   end
 end
 

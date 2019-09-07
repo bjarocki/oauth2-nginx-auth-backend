@@ -69,14 +69,13 @@
         <div class="box">
           <p class="is-centered"></p>
           <figure class="image is-256x256">
-            <img src="images/devops-logo.png">
+            <img src="../images/ok-512.png">
           </figure>
-<% if providers.include? "slack" %>
-          <p><button class="loginBtn loginBtn--slack" onclick="location.href='/oauth2/slack/sign_in'">Login with Slack</button></p>
-<% end %>
-<% if providers.include? "google" %>
-          <p><button class="loginBtn loginBtn--google" onclick="location.href='/oauth2/google/sign_in'">Login with Google</button></p>
-<% end %>
+          <ul>
+          <% services.each do |url| %>
+            <li><a href="<%= url %>"><%= url %></a></li>
+          <% end %>
+          </ul>
         </div>
       </div>
     </div>
