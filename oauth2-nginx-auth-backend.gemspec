@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'mail', '~> 2.7.1'
   spec.add_runtime_dependency 'httparty', '~> 0.15'
-  spec.add_runtime_dependency 'sinatra', '~> 2.0'
+  spec.add_runtime_dependency 'sinatra', '>= 2', '< 4'
   spec.add_runtime_dependency 'sinatra-contrib', '~> 2.0'
   spec.add_runtime_dependency 'sinatra-logger', '>= 0.2.6'
 end
